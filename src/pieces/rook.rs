@@ -1,6 +1,7 @@
 use crate::utils::{is_valid, get_piece_color, is_cell_color_ally, cleaned_positions};
 use super::{PieceColor, PieceType};
 
+
 pub struct Rook{}
 
 impl Rook{
@@ -14,7 +15,7 @@ impl Rook{
     "
   }
 
-  pub fn authorized_positions(coordinates: [i32; 2], color: PieceColor, board: [[Option<(PieceType, PieceColor)>; 8]; 8]) -> Vec<Vec<i32>> {
+  pub fn rook_moves(coordinates: [i32; 2], color: PieceColor, board: [[Option<(PieceType, PieceColor)>; 8]; 8], allow_move_on_ally_positions: bool) -> Vec<Vec<i32>> {
     // pawns can only move in one direction depending on their color
     let mut positions: Vec<Vec<i32>> = vec![];
 
@@ -37,7 +38,7 @@ impl Rook{
         continue;
     }
     // ally cell
-    if is_cell_color_ally(board, new_coordinates, color) {
+    if is_cell_color_ally(board, new_coordinates, color) && !allow_move_on_ally_positions{
         break;
     }
     // enemy cell
@@ -62,7 +63,7 @@ impl Rook{
           continue;
       }
       // ally cell
-      if is_cell_color_ally(board, new_coordinates, color) {
+      if is_cell_color_ally(board, new_coordinates, color) && !allow_move_on_ally_positions{
           break;
       }
       // enemy cell
@@ -87,7 +88,7 @@ impl Rook{
         continue;
     }
     // ally cell
-    if is_cell_color_ally(board, new_coordinates, color) {
+    if is_cell_color_ally(board, new_coordinates, color) && !allow_move_on_ally_positions{
         break;
     }
     // enemy cell
@@ -112,7 +113,7 @@ impl Rook{
         continue;
     }
     // ally cell
-    if is_cell_color_ally(board, new_coordinates, color) {
+    if is_cell_color_ally(board, new_coordinates, color) && !allow_move_on_ally_positions{
         break;
     }
     // enemy cell
@@ -122,8 +123,15 @@ impl Rook{
 
     cleaned_positions(positions)
   }
-}
 
+pub fn authorized_positions(coordinates: [i32; 2], color: PieceColor, board: [[Option<(PieceType, PieceColor)>; 8]; 8]) -> Vec<Vec<i32>> {
+  Self::rook_moves(coordinates, color, board, false)
+ }
+
+ pub fn protecting_positions(coordinates: [i32; 2], color: PieceColor, board: [[Option<(PieceType, PieceColor)>; 8]; 8]) -> Vec<Vec<i32>> {
+   Self::rook_moves(coordinates, color, board, true)
+ }
+}
 
 #[cfg(test)]
 mod tests {
