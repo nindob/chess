@@ -1,6 +1,6 @@
 use crate::utils::cleaned_positions;
 use crate::pieces::bishop::Bishop;
-use super::rook::Rook;
+use crate::pieces::rook::Rook;
 use super::{PieceType, PieceColor};
 
 pub struct Queen{}
