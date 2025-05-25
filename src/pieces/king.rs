@@ -1,7 +1,7 @@
 use super::{Movable, PieceColor, PieceType, Position};
 use crate::utils::{
-    cleaned_positions, get_all_checked_cells, get_piece_type, is_cell_color_ally,
-    is_valid, is_vec_in_array, did_piece_already_move,
+    cleaned_positions, did_piece_already_move, get_all_protected_cells, get_piece_type,
+    is_cell_color_ally, is_valid, is_vec_in_array,
 };
 
 pub struct King;
@@ -19,10 +19,10 @@ impl Movable for King {
         let x = coordinates[1];
 
         // can move on a complete row
-        // generate positions in all eight possible directions
+        // Generate positions in all eight possible directions
         for &dy in &[-1, 0, 1] {
             for &dx in &[-1, 0, 1] {
-                // skip the case where both dx and dy are zero (the current position)
+                // Skip the case where both dx and dy are zero (the current position)
                 let new_x = x + dx;
                 let new_y = y + dy;
 
@@ -46,42 +46,41 @@ impl Position for King {
         color: PieceColor,
         board: [[Option<(PieceType, PieceColor)>; 8]; 8],
         move_history: Vec<(Option<PieceType>, String)>,
+        is_king_checked: bool,
     ) -> Vec<Vec<i8>> {
         let mut positions: Vec<Vec<i8>> = vec![];
-        let checked_cells = get_all_checked_cells(board, color, move_history.clone());
+        let checked_cells = get_all_protected_cells(board, color, move_history.clone());
 
         let rook_big_castle_x = 0;
         let rook_small_castle_x = 7;
         let king_x = 4;
         let king_line = if color == PieceColor::White { 7 } else { 0 };
 
-        // we check the condition for small and big castling
-        if !did_piece_already_move(&move_history, (Some(PieceType::King), [king_line, king_x])) {
-            // we check if there is no pieces between tower and king
+        // We check the condition for small and big castling
+        if !did_piece_already_move(&move_history, (Some(PieceType::King), [king_line, king_x]))
+            && !is_king_checked
+        {
+            // We check if there is no pieces between tower and king
 
-            // big castle check
-            if !did_piece_already_move(&move_history, (Some(PieceType::Rook), [king_line, rook_big_castle_x])) && King::check_castling_condition(
-                    board,
-                    color,
-                    0,
-                    3,
-                    &checked_cells,
-                ) {
+            // Big castle check
+            if !did_piece_already_move(
+                &move_history,
+                (Some(PieceType::Rook), [king_line, rook_big_castle_x]),
+            ) && King::check_castling_condition(board, color, 0, 3, &checked_cells)
+            {
                 positions.push(vec![king_line, 0]);
             }
-            // small castle check
-            if !did_piece_already_move(&move_history, (Some(PieceType::Rook), [king_line, rook_small_castle_x])) && King::check_castling_condition(
-                    board,
-                    color,
-                    5,
-                    7,
-                    &checked_cells,
-                ) {
+            // Small castle check
+            if !did_piece_already_move(
+                &move_history,
+                (Some(PieceType::Rook), [king_line, rook_small_castle_x]),
+            ) && King::check_castling_condition(board, color, 5, 7, &checked_cells)
+            {
                 positions.push(vec![king_line, 7]);
             }
         }
 
-        // here we only want king positions that are not in impossible (already checked)
+        // Here we only want king positions that are not in impossible (already checked)
         let king_cells = King::piece_move(coordinates, color, board, false, move_history);
 
         for king_position in king_cells.clone() {
@@ -93,7 +92,7 @@ impl Position for King {
         positions
     }
 
-    // this method is used to calculated the cells the king is actually covering and is used when the other king authorized position is called
+    // This method is used to calculated the cells the king is actually covering and is used when the other king authorized position is called
     fn protected_positions(
         coordinates: [i8; 2],
         color: PieceColor,
@@ -151,6 +150,7 @@ mod tests {
     use crate::{
         board::Board,
         pieces::{king::King, PieceColor, PieceType, Position},
+        utils::is_getting_checked,
     };
 
     #[test]
@@ -208,7 +208,7 @@ mod tests {
         right_positions.sort();
 
         let mut positions =
-            King::authorized_positions([4, 4], PieceColor::White, board.board, vec![]);
+            King::authorized_positions([4, 4], PieceColor::White, board.board, vec![], false);
         positions.sort();
 
         assert_eq!(right_positions, positions);
@@ -269,7 +269,68 @@ mod tests {
         right_positions.sort();
 
         let mut positions =
-            King::authorized_positions([4, 4], PieceColor::White, board.board, vec![]);
+            King::authorized_positions([4, 4], PieceColor::White, board.board, vec![], false);
+        positions.sort();
+
+        assert_eq!(right_positions, positions);
+    }
+
+    #[test]
+    fn multiple_enemies_3() {
+        let custom_board = [
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [
+                None,
+                None,
+                None,
+                None,
+                Some((PieceType::Rook, PieceColor::Black)),
+                None,
+                None,
+                None,
+            ],
+            [None, None, None, None, None, None, None, None],
+            [
+                None,
+                None,
+                None,
+                None,
+                Some((PieceType::King, PieceColor::White)),
+                Some((PieceType::Rook, PieceColor::Black)),
+                None,
+                None,
+            ],
+            [
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some((PieceType::Bishop, PieceColor::Black)),
+                None,
+                None,
+            ],
+            [
+                None,
+                None,
+                Some((PieceType::Bishop, PieceColor::Black)),
+                None,
+                None,
+                None,
+                None,
+                None,
+            ],
+            [None, None, None, None, None, None, None, None],
+        ];
+        let mut board = Board::default();
+        board.set_board(custom_board);
+
+        let mut right_positions = vec![vec![4, 5]];
+        right_positions.sort();
+
+        let mut positions =
+            King::authorized_positions([4, 4], PieceColor::White, board.board, vec![], false);
         positions.sort();
 
         assert_eq!(right_positions, positions);
@@ -330,7 +391,7 @@ mod tests {
         right_positions.sort();
 
         let mut positions =
-            King::authorized_positions([7, 4], PieceColor::White, board.board, vec![]);
+            King::authorized_positions([7, 4], PieceColor::White, board.board, vec![], false);
         positions.sort();
 
         assert_eq!(right_positions, positions);
@@ -391,7 +452,7 @@ mod tests {
         right_positions.sort();
 
         let mut positions =
-            King::authorized_positions([0, 4], PieceColor::Black, board.board, vec![]);
+            King::authorized_positions([0, 4], PieceColor::Black, board.board, vec![], false);
         positions.sort();
 
         assert_eq!(right_positions, positions);
@@ -452,7 +513,76 @@ mod tests {
         right_positions.sort();
 
         let mut positions =
-            King::authorized_positions([0, 4], PieceColor::Black, board.board, vec![]);
+            King::authorized_positions([0, 4], PieceColor::Black, board.board, vec![], false);
+        positions.sort();
+
+        assert_eq!(right_positions, positions);
+    }
+
+    #[test]
+    fn big_castle_black_king_checked() {
+        let custom_board = [
+            [
+                Some((PieceType::Rook, PieceColor::Black)),
+                Some((PieceType::Knight, PieceColor::Black)),
+                Some((PieceType::Bishop, PieceColor::Black)),
+                Some((PieceType::Queen, PieceColor::Black)),
+                Some((PieceType::King, PieceColor::Black)),
+                None,
+                None,
+                Some((PieceType::Rook, PieceColor::Black)),
+            ],
+            [
+                Some((PieceType::Pawn, PieceColor::Black)),
+                Some((PieceType::Pawn, PieceColor::Black)),
+                Some((PieceType::Pawn, PieceColor::Black)),
+                Some((PieceType::Pawn, PieceColor::Black)),
+                None,
+                Some((PieceType::Pawn, PieceColor::Black)),
+                Some((PieceType::Pawn, PieceColor::Black)),
+                Some((PieceType::Pawn, PieceColor::Black)),
+            ],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [
+                Some((PieceType::Pawn, PieceColor::White)),
+                Some((PieceType::Pawn, PieceColor::White)),
+                Some((PieceType::Pawn, PieceColor::White)),
+                Some((PieceType::Pawn, PieceColor::White)),
+                None,
+                Some((PieceType::Pawn, PieceColor::White)),
+                Some((PieceType::Pawn, PieceColor::White)),
+                Some((PieceType::Pawn, PieceColor::White)),
+            ],
+            [
+                Some((PieceType::Rook, PieceColor::White)),
+                Some((PieceType::Knight, PieceColor::White)),
+                Some((PieceType::Bishop, PieceColor::White)),
+                Some((PieceType::Queen, PieceColor::White)),
+                Some((PieceType::Rook, PieceColor::White)),
+                Some((PieceType::Bishop, PieceColor::White)),
+                None,
+                Some((PieceType::King, PieceColor::White)),
+            ],
+        ];
+        let mut board = Board::new(custom_board, PieceColor::Black, vec![]);
+        board.set_board(custom_board);
+
+        let is_king_checked =
+            is_getting_checked(board.board, board.player_turn, board.moves_history);
+
+        let mut right_positions = vec![vec![0, 5]];
+        right_positions.sort();
+
+        let mut positions = King::authorized_positions(
+            [0, 4],
+            PieceColor::Black,
+            board.board,
+            vec![],
+            is_king_checked,
+        );
         positions.sort();
 
         assert_eq!(right_positions, positions);
@@ -512,8 +642,17 @@ mod tests {
         let mut right_positions = vec![vec![0, 5]];
         right_positions.sort();
 
-        let mut positions =
-            King::authorized_positions([0, 4], PieceColor::Black, board.board, vec![(Some(PieceType::Rook), "0747".to_string()), (Some(PieceType::Pawn), "6252".to_string()), (Some(PieceType::Rook), "4707".to_string())]);
+        let mut positions = King::authorized_positions(
+            [0, 4],
+            PieceColor::Black,
+            board.board,
+            vec![
+                (Some(PieceType::Rook), "0747".to_string()),
+                (Some(PieceType::Pawn), "6252".to_string()),
+                (Some(PieceType::Rook), "4707".to_string()),
+            ],
+            false,
+        );
         positions.sort();
 
         assert_eq!(right_positions, positions);
