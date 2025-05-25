@@ -1,37 +1,39 @@
 use std::error;
+use crate::board::Board;
 
-// application result type
+// application result type.
 pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
 
-// application
+// application.
 #[derive(Debug)]
 pub struct App {
-    // is the app running
+    // is the application running?
     pub running: bool,
-    // counter
-    pub counter: u8,
+    // board
+    pub board: Board, 
 }
 
 impl Default for App {
     fn default() -> Self {
         Self {
             running: true,
-            counter: 0,
+            board: Board::default()
         }
     }
 }
 
 impl App {
-    // create a new app instance
+    // constructs a new instance of [`App`].
     pub fn new() -> Self {
         Self::default()
     }
 
-    // handle tick event of terminal
+    // handles the tick event of the terminal.
     pub fn tick(&self) {}
 
-    // set running to false to quit the app
+    // set running to false to quit the application.
     pub fn quit(&mut self) {
         self.running = false;
     }
+
 }
