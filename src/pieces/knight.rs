@@ -14,7 +14,7 @@ impl Movable for Knight {
 
         let (y, x) = (coordinates[0], coordinates[1]);
 
-        // generate knight positions in all eight possible L-shaped moves
+        // Generate knight positions in all eight possible L-shaped moves
         let piece_move = [
             (-2, -1),
             (-2, 1),
@@ -50,7 +50,6 @@ impl Position for Knight {
         color: PieceColor,
         board: [[Option<(PieceType, PieceColor)>; 8]; 8],
         _move_history: Vec<(Option<PieceType>, String)>,
-        _did_king_already_move: bool,
     ) -> Vec<Vec<i8>> {
         Self::piece_move(coordinates, color, board, false, _move_history)
     }
@@ -121,7 +120,7 @@ mod tests {
         right_positions.sort();
 
         let mut positions =
-            Knight::authorized_positions([4, 4], PieceColor::White, board.board, vec![], false);
+            Knight::authorized_positions([4, 4], PieceColor::White, board.board, vec![]);
         positions.sort();
 
         assert_eq!(right_positions, positions);
@@ -173,7 +172,7 @@ mod tests {
         right_positions.sort();
 
         let mut positions =
-            Knight::authorized_positions([7, 7], PieceColor::White, board.board, vec![], false);
+            Knight::authorized_positions([7, 7], PieceColor::White, board.board, vec![]);
         positions.sort();
 
         assert_eq!(right_positions, positions);
