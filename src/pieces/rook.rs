@@ -1,4 +1,5 @@
 use crate::utils::{is_valid, get_piece_color, is_cell_color_ally, cleaned_positions};
+use super::{PieceColor, PieceType};
 
 pub struct Rook{}
 
@@ -13,13 +14,12 @@ impl Rook{
     "
   }
 
-  pub fn authorized_positions(coordinates: [i32; 2], color: char, board: [[&'static str; 8]; 8]) -> Vec<Vec<i32>> {
+  pub fn authorized_positions(coordinates: [i32; 2], color: PieceColor, board: [[Option<(PieceType, PieceColor)>; 8]; 8]) -> Vec<Vec<i32>> {
     // pawns can only move in one direction depending on their color
     let mut positions: Vec<Vec<i32>> = vec![];
 
     let (y, x) = (coordinates[0], coordinates[1]);
 
-    
 
     // right row
     for i in 1..8i32 {
@@ -33,7 +33,7 @@ impl Rook{
     }
 
     // empty cell 
-    if get_piece_color(board, new_coordinates) == ' ' {
+    if get_piece_color(board, new_coordinates).is_none() {
         positions.push(new_coordinates.to_vec());
         continue;
     }
@@ -45,6 +45,7 @@ impl Rook{
     positions.push(new_coordinates.to_vec());
     break;
   }
+
 
   // left row
   for i in 1..8i32 {
@@ -58,7 +59,7 @@ impl Rook{
       }
 
       // empty cell 
-      if get_piece_color(board, new_coordinates) == ' ' {
+      if get_piece_color(board, new_coordinates).is_none() {
           positions.push(new_coordinates.to_vec());
           continue;
       }
@@ -71,6 +72,7 @@ impl Rook{
       break;
     }
 
+    
     // bottom row
     for i in 1..8i32 {
       let new_x = x;
@@ -83,7 +85,7 @@ impl Rook{
     }
 
     // empty cell 
-    if get_piece_color(board, new_coordinates) == ' ' {
+    if get_piece_color(board, new_coordinates).is_none() {
         positions.push(new_coordinates.to_vec());
         continue;
     }
@@ -96,6 +98,7 @@ impl Rook{
     break;
     }
 
+    
     // up row
     for i in 1..8i32 {
       let new_x = x;
@@ -108,7 +111,7 @@ impl Rook{
     }
 
     // empty cell 
-    if get_piece_color(board, new_coordinates) == ' ' {
+    if get_piece_color(board, new_coordinates).is_none() {
         positions.push(new_coordinates.to_vec());
         continue;
     }

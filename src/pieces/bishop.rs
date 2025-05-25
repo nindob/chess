@@ -1,5 +1,5 @@
-
 use crate::utils::{is_valid, get_piece_color, is_cell_color_ally, cleaned_positions};
+use super::{PieceColor, PieceType};
 pub struct Bishop{}
 impl Bishop{
   pub fn to_string() -> &'static str{
@@ -11,7 +11,7 @@ impl Bishop{
     █████\n\
     "
   }
-  pub fn authorized_positions(coordinates: [i32; 2], color: char, board: [[&'static str; 8]; 8]) -> Vec<Vec<i32>> {
+  pub fn authorized_positions(coordinates: [i32; 2], color: PieceColor, board: [[Option<(PieceType, PieceColor)>; 8]; 8]) -> Vec<Vec<i32>> {
     let mut positions: Vec<Vec<i32>> = vec![];
 
     let y = coordinates[0];
@@ -29,7 +29,7 @@ impl Bishop{
       }
   
       // empty cell 
-      if get_piece_color(board, new_coordinates) == ' ' {
+      if get_piece_color(board, new_coordinates).is_none() {
           positions.push(new_coordinates.to_vec());
           continue;
       }
@@ -54,7 +54,7 @@ impl Bishop{
       }
   
       // empty cell 
-      if get_piece_color(board, new_coordinates) == ' ' {
+      if get_piece_color(board, new_coordinates).is_none() {
           positions.push(new_coordinates.to_vec());
           continue;
       }
@@ -79,7 +79,7 @@ impl Bishop{
     }
 
     // empty cell 
-    if get_piece_color(board, new_coordinates) == ' ' {
+    if get_piece_color(board, new_coordinates).is_none() {
         positions.push(new_coordinates.to_vec());
         continue;
     }
@@ -104,7 +104,7 @@ impl Bishop{
     }
 
     // empty cell 
-    if get_piece_color(board, new_coordinates) == ' ' {
+    if get_piece_color(board, new_coordinates).is_none() {
         positions.push(new_coordinates.to_vec());
         continue;
     }
