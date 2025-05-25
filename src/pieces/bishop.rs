@@ -121,10 +121,9 @@ impl Bishop{
   }
 }
 
-
 #[cfg(test)]
 mod tests {
-  use crate::{board::Board, pieces::{PieceType, PieceColor, rook::Rook, bishop::Bishop}};
+  use crate::{board::Board, pieces::{PieceType, PieceColor, bishop::Bishop}};
 
   #[test]
   fn bishop_moves_no_enemies() {
@@ -141,7 +140,7 @@ mod tests {
       let mut board = Board::default();
       board.set_board(custom_board);
 
-      let right_positions = vec![
+      let mut right_positions = vec![
         vec![0, 0],
         vec![1, 1],
         vec![2, 2],
@@ -159,9 +158,11 @@ mod tests {
         vec![6, 2],
         vec![7, 1],
 
-      ].sort();
+      ];
+      right_positions.sort();
 
-      let positions = Bishop::authorized_positions([4, 4], PieceColor::White, board.board).sort();
+      let mut positions = Bishop::authorized_positions([4, 4], PieceColor::White, board.board);
+      positions.sort();
 
       assert_eq!(right_positions, positions);
   }
@@ -181,7 +182,7 @@ mod tests {
       let mut board = Board::default();
       board.set_board(custom_board);
 
-      let right_positions = vec![
+      let mut right_positions = vec![
         vec![0, 0],
         vec![1, 1],
         vec![2, 2],
@@ -196,9 +197,11 @@ mod tests {
         vec![5, 3],
         vec![6, 2],
         vec![7, 1],
-      ].sort();
+      ];
+      right_positions.sort();
 
-      let positions = Rook::authorized_positions([4, 4], PieceColor::White, board.board).sort();
+      let mut positions = Bishop::authorized_positions([4, 4], PieceColor::White, board.board);
+      positions.sort();
 
       assert_eq!(right_positions, positions);
   }
@@ -218,7 +221,7 @@ mod tests {
       let mut board = Board::default();
       board.set_board(custom_board);
 
-      let right_positions = vec![
+      let mut right_positions = vec![
         vec![3, 3],
 
         vec![5, 5],
@@ -229,9 +232,12 @@ mod tests {
         
         vec![5, 3],
         vec![6, 2],
-      ].sort();
+      ];
+      right_positions.sort();
 
-      let positions = Rook::authorized_positions([4, 4], PieceColor::White, board.board).sort();
+
+      let mut positions = Bishop::authorized_positions([4, 4], PieceColor::White, board.board);
+      positions.sort();
 
       assert_eq!(right_positions, positions);
   }
