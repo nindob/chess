@@ -2,9 +2,9 @@ use chess::app::{App, AppResult};
 use chess::event::{Event, EventHandler};
 use chess::handler::handle_key_events;
 use chess::tui::Tui;
-use std::io;
 use ratatui::backend::CrosstermBackend;
 use ratatui::Terminal;
+use std::io;
 
 fn main() -> AppResult<()> {
     // create an application.
