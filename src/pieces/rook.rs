@@ -7,10 +7,10 @@ impl Rook {
     pub fn to_string() -> &'static str {
         "\
     \n\
-    █ █ █\n\
-    █████\n\
-     ███\n\
-    █████\n\
+    █▟█▙█\n\
+    ▜███▛\n\
+    ▐███▌\n\
+   ▗█████▖\n\
     "
     }
 
@@ -55,7 +55,7 @@ impl Rook {
             break;
         }
 
-        // left
+        // left row
         for i in 1..8i32 {
             let new_x = x - i;
             let new_y = y;
