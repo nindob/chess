@@ -9,9 +9,9 @@ use ratatui::{
 
 use crate::{app::App, constants::WHITE};
 
-// renders the user interface widgets.
+/// Renders the user interface widgets.
 pub fn render(app: &mut App, frame: &mut Frame) {
-    // splitting the full tui in 3 vertical boxes and 3 horizontal boxes in the vertical[1]
+    // Splitting the full tui in 3 vertical boxes and 3 horizontal boxes in the vertical[1]
     let main_area = frame.size();
 
     let main_layout_horizontal = Layout::default()
@@ -39,17 +39,17 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         )
         .split(main_layout_horizontal[1]);
 
-    // board block representing the full board div
-    let board_block = Block::default().style(Style::default().bg(Color::Rgb(210, 200, 190)));
+    // Board block representing the full board div
+    let board_block = Block::default().style(Style::default().bg(Color::Black));
 
-    // we render the board_block in the center layout made above
+    // We render the board_block in the center layout made above
     frame.render_widget(board_block.clone(), main_layout_vertical[1]);
 
-    // we make the inside of the board
+    // We make the inside of the board
     app.board
         .board_render(board_block.inner(main_layout_vertical[1]), frame);
 
-    // we make the inside of the board
+    // We make the inside of the board
     app.board
         .history_render(board_block.inner(main_layout_vertical[3]), frame);
 
@@ -99,12 +99,12 @@ pub fn render_popup(frame: &mut Frame) {
         .alignment(Alignment::Left)
         .wrap(Wrap { trim: true });
 
-    frame.render_widget(Clear, area); // this clears out the background
+    frame.render_widget(Clear, area); //this clears out the background
     frame.render_widget(block, area);
     frame.render_widget(paragraph, area);
 }
 
-// helper function to create a centered rect using up certain percentage of the available rect `r`
+/// helper function to create a centered rect using up certain percentage of the available rect `r`
 fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
     let popup_layout = Layout::default()
         .direction(Direction::Vertical)
