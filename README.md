@@ -1,16 +1,6 @@
-# chess
-A chess tui implementation in rust
+<div align="center">
+<h1>chess</h1>
+A chess TUI implementation in rust
+</div>
 
 ![board](./assets/chess-board.png)
-
-⚠️ THIS PROJECT IS STILL IN DEVELOPMENT ⚠️ 
-
-### Roadmap
-
-- ✅ Board render
-- ✅ piece authorized moves
-- Game logic 
-- Win conditions
-- Menu
-- Last moves historic
-- UCI compatibility
