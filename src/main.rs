@@ -1,3 +1,6 @@
+#[cfg(feature = "chess")]
+extern crate chess;
+
 use chess::app::{App, AppResult};
 use chess::event::{Event, EventHandler};
 use chess::handler::handle_key_events;
