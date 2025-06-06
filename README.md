@@ -5,8 +5,8 @@ A chess TUI implementation in rust
 
 ![board](./assets/demo.gif)
 
-[GitHub CI](https://github.com/nindob/chess/actions/workflows/build_and_test.yml/badge.svg)
-![GHCR Push](https://github.com/nindob/chess/actions/workflows/docker_push.yml/badge.svg)
+[![Cargo Build & Test](https://github.com/nindob/chess/actions/workflows/build_and_test.yml/badge.svg?branch=main)](https://github.com/nindob/chess/actions/workflows/build_and_test.yml)
+[![Build and push docker image](https://github.com/nindob/chess/actions/workflows/flow_test_build_push.yml/badge.svg?branch=main)](https://github.com/nindob/chess/actions/workflows/flow_test_build_push.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ### Demo
