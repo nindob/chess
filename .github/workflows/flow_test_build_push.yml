@@ -6,6 +6,10 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build_and_test:
     name: Build and test
@@ -17,5 +21,8 @@ jobs:
     uses: ./.github/workflows/docker_push.yml
     with:
       image-tags: latest
+    permissions:
+      packages: write
+      contents: read
 
     
