@@ -1,4 +1,4 @@
-name: Build and push docker imageAdd commentMore actions
+name: Build, Test and Push
 
 on:
   push:
@@ -15,5 +15,7 @@ jobs:
     name: Build & push Docker image
     needs: build_and_test
     uses: ./.github/workflows/docker_push.yml
+    with:
+      image-tags: latest
 
     
